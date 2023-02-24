@@ -130,7 +130,23 @@ static int gmac_find_ethdev(void)
 
 
  
-
+// static void mdio_write(int skfd, int location, int value)
+// {
+// 	struct mii_ioctl_data *mii = (struct mii_ioctl_data *)&ifr.ifr_data;
+// 	mii->reg_num = location;
+// 	mii->val_in = value;
+// 	if (ioctl(skfd, SIOCSMIIREG, &ifr) < 0) {
+// 		fprintf(stderr, "SIOCSMIIREG on %s failed: %s\n", ifr.ifr_name,
+// 				strerror(errno));
+// 	}
+// }
+// static void help()
+// {
+// 	printf("help :\n");
+// 	printf("set ETH_DEVICE to change device\n");
+// 	printf("\t\tmdio_cmd addr reg [val]\n");
+// }
+ 
 
 //2023-02-01 增加对 Yt8521sh 的检测  by zhaodazhi
 //返回1表示存在Yt8521sh，其他表示不存在

@@ -19,7 +19,13 @@
 #define I2C_ADAPTER_DEVICE	"/dev/i2c-4"
 #define I2C_DEVICE_ADDR		(0x10)
 
-static int s_write_reg(unsigned char addr, unsigned char val) {
+
+
+//2023-02-24  4个通道音量临时保存
+static unsigned char output_vol[4] = {0x1c,0x1c,0x1c,0x1c};
+
+
+int s_write_reg(unsigned char addr, unsigned char val) {
 	int i2c_adapter_fd = 0;
 	CHECK((i2c_adapter_fd = i2c_adapter_init(I2C_ADAPTER_DEVICE, I2C_DEVICE_ADDR)) > 0, -1, "Error i2c_adapter_init!");
 	if(i2c_device_reg_write(i2c_adapter_fd, addr, val)) {
@@ -93,8 +99,12 @@ void drvDisableSpeaker(void) {
 #else
 	unsigned char val = 0;
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
-	val &= ~((unsigned char)0x1 << 3);
+	val &= ~((unsigned char)0x1 << 3);     //bit3 --> Lout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
+
+	CHECK(!s_read_reg(ES8388_DACCONTROL26, &output_vol[1]), , "Error s_read_reg!");
+	CHECK(!s_write_reg(ES8388_DACCONTROL26, 0), , "Error s_read_reg!");  //音量调为0
+	
 #endif
 }
 
@@ -108,8 +118,11 @@ void drvEnableSpeaker(void) {
 #else
 	unsigned char val = 0;
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
-	val |= (0x1 << 3);
+	val |= (0x1 << 3);   //bit3 --> Lout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
+
+	CHECK(!s_write_reg(ES8388_DACCONTROL26, output_vol[1]), , "Error s_read_reg!");  //音量调为0
+	
 #endif
 }
 
@@ -248,27 +261,37 @@ void drvSetEarphVolume(int value) {
 void drvEnableHandout(void) {
 	unsigned char val = 0;
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
-	val |= (0x1 << 4);
+	val |= (0x1 << 4);   //bit4 --> Rout1
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
+
+	CHECK(!s_write_reg(ES8388_DACCONTROL25, output_vol[2]), , "Error s_read_reg!");
 }
 
 void drvDisableHandout(void) {
 	unsigned char val = 0;
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
-	val &= ~((unsigned char)0x1 << 4);
+	val &= ~((unsigned char)0x1 << 4);    //bit4 --> Rout1
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
+
+	CHECK(!s_read_reg(ES8388_DACCONTROL25, &output_vol[2]), , "Error s_read_reg!");
+	CHECK(!s_write_reg(ES8388_DACCONTROL25, 0), , "Error s_read_reg!");  //音量调为0
 }
 
 void drvEnableEarphout(void) {
 	unsigned char val = 0;
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
-	val |= (0x1 << 2);
+	val |= (0x1 << 2);    //bit2 --> Rout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
+
+	CHECK(!s_write_reg(ES8388_DACCONTROL27, output_vol[0]), , "Error s_read_reg!");
 }
 
 void drvDisableEarphout(void) {
 	unsigned char val = 0;
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
-	val &= ~((unsigned char)0x1 << 2);
+	val &= ~((unsigned char)0x1 << 2);  //bit2 --> Rout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
+
+	CHECK(!s_read_reg(ES8388_DACCONTROL27, &output_vol[0]), , "Error s_read_reg!");
+	CHECK(!s_write_reg(ES8388_DACCONTROL27, 0), , "Error s_read_reg!");  //音量调为0
 }

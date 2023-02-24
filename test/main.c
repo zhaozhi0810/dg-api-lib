@@ -27,58 +27,116 @@
 #define WATCHDOG_TIMEOUT			(20)	// s
 
 enum {
-	TEST_ITEM_WATCHDOG_ENABLE,
-	TEST_ITEM_WATCHDOG_DISABLE,
-	TEST_ITEM_SCREEN_ENABLE,
-	TEST_ITEM_SPEAKER_ENABLE,
-	TEST_ITEM_SPEAKER_DISABLE,
-	TEST_ITEM_SPEAKER_VOLUME_ADD,
-	TEST_ITEM_SPEAKER_VOLUME_SUB,
-	TEST_ITEM_WARNING_ENABLE,
-	TEST_ITEM_WARNING_DISABLE,
-	TEST_ITEM_HAND_ENABLE,
-	TEST_ITEM_HAND_DISABLE,
-	TEST_ITEM_HAND_VOLUME_ADD,
-	TEST_ITEM_HAND_VOLUME_SUB,
-	TEST_ITEM_HEADSET_ENABLE,
-	TEST_ITEM_HEADSET_DISABLE,
-	TEST_ITEM_HEADSET_VOLUME_ADD,
-	TEST_ITEM_HEADSET_VOLUME_SUB,
-	TEST_ITEM_USB0_ENABLE,
-	TEST_ITEM_USB0_DISABLE,
-	TEST_ITEM_USB1_ENABLE,
-	TEST_ITEM_USB1_DISABLE,
-	TEST_ITEM_GET_CPU_TEMPERATURE,
-	TEST_ITEM_GET_INTERFACE_BOARD_TEMPERATURE,
-	TEST_ITEM_SET_KEYBOARD_LED_BRIGHTNESS,
-	TEST_ITEM_SET_KEYBOARD_LED_ON_OFF,
-	TEST_ITEM_SET_ALLKEYBOARD_LED_ON_OFF,
-	TEST_ITEM_SET_SCREEN_BRIGHTNESS,
-	TEST_ITEM_RESET_KEYBOARD,
-	TEST_ITEM_RESET_SCREEN,
-	TEST_ITEM_RESET_CORE_BOARD,
-	TEST_ITEM_GET_VOLGATE,
-	TEST_ITEM_GET_ELECTRICITY,
-	TEST_ITEM_GET_KEYBOARD_MODEL,
-	TEST_ITEM_GET_LCD_MODEL,
-	TEST_ITEM_AUDIO_SELECT_PANEL_MIC,
-	TEST_ITEM_AUDIO_SELECT_HAND_MIC,
-	TEST_ITEM_AUDIO_SELECT_HEADSET_MIC,
-	TEST_ITEM_TOUCHSCREEN_ENABLE,
-	TEST_ITEM_TOUCHSCREEN_DISABLE,
-	TEST_ITEM_GET_RTC,
-	TEST_ITEM_SET_RTC,
-	TEST_ITEM_GET_HEADSET_INSERT_STATUS,
-	TEST_ITEM_GET_HANDLE_INSERT_STATUS,
-	TEST_ITEM_GET_LCD_MCUVERSION_STATUS, //获得LCD 屏单片机版本信息
-	TEST_ITEM_GET_BORAD_MCUVERSION_STATUS,  //获得导光面板按键版本信息
-	TEST_ITEM_GET_YT8521SH_STATUS
-};
+	TEST_ITEM_WATCHDOG_ENABLE,  //0
+	TEST_ITEM_WATCHDOG_DISABLE,  //1
+	TEST_ITEM_SCREEN_ENABLE,    //2
+	TEST_ITEM_SPEAKER_ENABLE,   //3
+	TEST_ITEM_SPEAKER_DISABLE,  //4
+	TEST_ITEM_SPEAKER_VOLUME_ADD,  //5
+	TEST_ITEM_SPEAKER_VOLUME_SUB,  //6
+	TEST_ITEM_WARNING_ENABLE,     //7
+	TEST_ITEM_WARNING_DISABLE,   //8
+	TEST_ITEM_HAND_ENABLE,      //9
+	TEST_ITEM_HAND_DISABLE,     //10
+	TEST_ITEM_HAND_VOLUME_ADD,   //11
+	TEST_ITEM_HAND_VOLUME_SUB,   //12
+	TEST_ITEM_HEADSET_ENABLE,    //13
+	TEST_ITEM_HEADSET_DISABLE,   //14
+	TEST_ITEM_HEADSET_VOLUME_ADD,   //15
+	TEST_ITEM_HEADSET_VOLUME_SUB,   //16
+	TEST_ITEM_USB0_ENABLE,        //17
+	TEST_ITEM_USB0_DISABLE,      //18
+	TEST_ITEM_USB1_ENABLE,      //19
+	TEST_ITEM_USB1_DISABLE,     //20
+	TEST_ITEM_GET_CPU_TEMPERATURE,    //21
+	TEST_ITEM_GET_INTERFACE_BOARD_TEMPERATURE,   //22
+	TEST_ITEM_SET_KEYBOARD_LED_BRIGHTNESS,     //23
+	TEST_ITEM_SET_KEYBOARD_LED_ON_OFF,         //24
+	TEST_ITEM_SET_ALLKEYBOARD_LED_ON_OFF,      //25
+	TEST_ITEM_SET_SCREEN_BRIGHTNESS,           //26
+	TEST_ITEM_RESET_KEYBOARD,                  //27
+	TEST_ITEM_RESET_SCREEN,                    //28
+	TEST_ITEM_RESET_CORE_BOARD,                //29
+	TEST_ITEM_GET_VOLGATE,                     //30
+	TEST_ITEM_GET_ELECTRICITY,                 //31
+	TEST_ITEM_GET_KEYBOARD_MODEL,             //32
+	TEST_ITEM_GET_LCD_MODEL,                  //33
+	TEST_ITEM_AUDIO_SELECT_PANEL_MIC,         //34
+	TEST_ITEM_AUDIO_SELECT_HAND_MIC,          //35
+	TEST_ITEM_AUDIO_SELECT_HEADSET_MIC,       //36
+	TEST_ITEM_TOUCHSCREEN_ENABLE,             //37
+	TEST_ITEM_TOUCHSCREEN_DISABLE,             //38
+	TEST_ITEM_GET_RTC,             //39
+	TEST_ITEM_SET_RTC,             //40
+	TEST_ITEM_GET_HEADSET_INSERT_STATUS,             //41
+	TEST_ITEM_GET_HANDLE_INSERT_STATUS,             //42
+	TEST_ITEM_GET_LCD_MCUVERSION_STATUS, //获得LCD 屏单片机版本信息,43
+	TEST_ITEM_GET_BORAD_MCUVERSION_STATUS,  //获得导光面板按键版本信息,44
+	TEST_ITEM_GET_YT8521SH_STATUS              //45
+}; 
 
 extern int drvCoreBoardExit(void);
 
 static bool s_main_thread_exit = false;
 static bool s_watchdog_feed_thread_exit = false;
+
+
+
+
+//左侧（中括号中的数）是722自动自定义的键值 比如KC_L1 --> 1
+//右侧是s_user_key_value中对应值得索引号，比如数字0，在数组中排13，就是0xd，
+//与驱动中正好是反的，目的就是在drv722test中的点亮灯的序号正好是文档表格中的数字
+//2023-02-22，by zhaozhi
+static const unsigned char s_user_map_led_value[] = {
+	[0x01] = 1	, //图示1左1 	 //KC_L1   1
+	[0x02] = 3	, //图示2左2 	 //KC_L2   3
+	[0x03] = 5	, //图示3左3 	 //KC_L3   5
+	[0x04] = 7	, //图示4左4 	 //KC_L4   7
+	[0x05] = 9	, //图示5左5 	 //KC_L5   9
+	[0x06] = 44 , //图示6左6 	 //KC_L6   44
+	[0x07] = 2	, //图示7右1 	 //KC_R1   2
+	[0x08] = 4	, //图示8右2 	 //KC_R2   4
+	[0x09] = 6	, //图示9右3 	 //KC_R3   6
+	[0x0A] = 8	, //图示10右4	 //KC_R4	8  
+	[0x0B] = 10 , //图示11右5	 //KC_R5	10
+	[0x0C] = 45 , //图示12右6	//KC_R6    45
+	[0x0D] = 27 , //0		//KC_NUM0	27
+	[0x0E] = 18 , //1		//KC_NUM1	18
+	[0x0F] = 19 , //2		//KC_NUM2	19	
+	[0x10] = 20 , //3		//KC_NUM3	20	
+	[0x11] = 21 , //4		//KC_NUM4	21	
+	[0x12] = 22 , //5		//KC_NUM5	22	
+	[0x13] = 23 , //6		//KC_NUM6	23	
+	[0x14] = 24 , //7		//KC_NUM7	24	
+	[0x15] = 25 , //8		//KC_NUM8	25	
+	[0x16] = 26 , //9		//KC_NUM9	26	
+	[0x17] = 28 , //*		//KC_DOT   28	
+	[0x18] = 29 , //#		//KC_CLEAR	 29 
+	[0x19] = 13 , //电话（拨号）			//KC_TEL   13
+	[0x1A] = 35 , //音量+ 	//KC_VOLUME_UP	   35
+	[0x1B] = 36 , //音量- 	//KC_VOLUME_DOWN	36	
+	[0x27] = 14 , //TEST		//KC_TESKKEY   14	//原0x1c改0x27
+	[0x1D] = 11 , //内通			//KC_INC	  11
+	[0x1E] = 12 , //外通			//KC_EXC	  12 
+	[0x1F] = 30 , //上 		//KC_UP 	  30
+	[0x20] = 31 , //下 		//KC_DOWN	  31
+	[0x21] = 17 , //PTT 	//KC_PTT		17	
+	[0x22] = 32 , //左 		//KC_LEFT	32
+	[0x23] = 33 , //右 		//KC_FIGHT	33
+	[0x24] = 34 , //OK			//KC_OK 	34
+	[0x25] = 15 , //保持			//KC_HOLD	15
+	[0x26] = 16 , //设置/摘挂机			//KC_RECOV	16
+	[0x27] = 42 , //测试/复位		//KC_xxx	
+	[0x28] = 37 , //指示灯-红		//LED_RED  37	
+	[0x29] = 38 , //指示灯-绿		//LED_GREEN 38	
+	[0x2A] = 39 , //指示灯-蓝		//KC_BLUE	39	
+	[0x2B] = 40  //全部键灯 		//ALL_KEY_LED  40
+};
+
+
+
+
+
 
 static void s_show_usage(void) {
 	printf("Usage:\n");
@@ -343,17 +401,20 @@ int main(int args, char *argv[]) {
 		}
 		case TEST_ITEM_SET_KEYBOARD_LED_ON_OFF: {   /*lsr modify 20220613*/
 			int KeyIndex = 0;
-			INFO("Please input KeyIndex: (%u-%u)", 1, 45);  //2023-01-15 1-45 by dazhi
+			INFO("Please input KeyIndex: (1-43)");  //2023-01-15 1-45 by dazhi
 			if(scanf("%d", &KeyIndex) != 1) {
 				ERR("Error scanf with %d: %s", errno, strerror(errno));
 				continue;
 			}
 
-			if(KeyIndex < 1 || KeyIndex > 45)
+			if(KeyIndex < 1 || KeyIndex > 43)
 			{
-				ERR("Error 输入超出范围(1-45)");
+				ERR("Error 输入超出范围(1-43)");
 				continue;
 			}	
+
+			KeyIndex = s_user_map_led_value[KeyIndex];  //转换一下，2023-02-22
+			
 
 			drvLightLED(KeyIndex);
 			sleep(1);
