@@ -320,6 +320,11 @@ bool get_handle_insert_status(void) {
 }
 
 
+
+
+#if 0  //2023-02-27  del by zhaozhi
+
+
 static struct ifreq ifr;
 static int fd;
 
@@ -449,5 +454,5 @@ int drvHasYt8521sh(void)
 	return (ret == 1);	// 返回1 表示存在，其他表示不存在
 }
 
-
+#endif   //#if 0  //2023-02-27  del by zhaozhi
 

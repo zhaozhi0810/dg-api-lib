@@ -21,9 +21,14 @@
 
 
 
+//#define VOL_MUTE_HANDLE_BY_REDUCE  1 //音量静音的时候，需要把对应通道音量调整为0，2023-02-27，邓说可以由上位机应用去完成
+
+
+
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 //2023-02-24  4个通道音量临时保存
 static unsigned char output_vol[4] = {0x1c,0x1c,0x1c,0x1c};
-
+#endif
 
 int s_write_reg(unsigned char addr, unsigned char val) {
 	int i2c_adapter_fd = 0;
@@ -102,8 +107,10 @@ void drvDisableSpeaker(void) {
 	val &= ~((unsigned char)0x1 << 3);     //bit3 --> Lout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
 
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 	CHECK(!s_read_reg(ES8388_DACCONTROL26, &output_vol[1]), , "Error s_read_reg!");
 	CHECK(!s_write_reg(ES8388_DACCONTROL26, 0), , "Error s_read_reg!");  //音量调为0
+#endif
 	
 #endif
 }
@@ -120,9 +127,9 @@ void drvEnableSpeaker(void) {
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
 	val |= (0x1 << 3);   //bit3 --> Lout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
-
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 	CHECK(!s_write_reg(ES8388_DACCONTROL26, output_vol[1]), , "Error s_read_reg!");  //音量调为0
-	
+#endif	
 #endif
 }
 
@@ -263,8 +270,9 @@ void drvEnableHandout(void) {
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
 	val |= (0x1 << 4);   //bit4 --> Rout1
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
-
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 	CHECK(!s_write_reg(ES8388_DACCONTROL25, output_vol[2]), , "Error s_read_reg!");
+#endif
 }
 
 void drvDisableHandout(void) {
@@ -272,9 +280,10 @@ void drvDisableHandout(void) {
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
 	val &= ~((unsigned char)0x1 << 4);    //bit4 --> Rout1
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
-
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 	CHECK(!s_read_reg(ES8388_DACCONTROL25, &output_vol[2]), , "Error s_read_reg!");
 	CHECK(!s_write_reg(ES8388_DACCONTROL25, 0), , "Error s_read_reg!");  //音量调为0
+#endif
 }
 
 void drvEnableEarphout(void) {
@@ -282,8 +291,9 @@ void drvEnableEarphout(void) {
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
 	val |= (0x1 << 2);    //bit2 --> Rout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
-
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 	CHECK(!s_write_reg(ES8388_DACCONTROL27, output_vol[0]), , "Error s_read_reg!");
+#endif
 }
 
 void drvDisableEarphout(void) {
@@ -291,7 +301,8 @@ void drvDisableEarphout(void) {
 	CHECK(!s_read_reg(ES8388_DACPOWER, &val), , "Error s_read_reg!");
 	val &= ~((unsigned char)0x1 << 2);  //bit2 --> Rout2
 	CHECK(!s_write_reg(ES8388_DACPOWER, val), , "Error s_write_reg!");
-
+#ifdef VOL_MUTE_HANDLE_BY_REDUCE
 	CHECK(!s_read_reg(ES8388_DACCONTROL27, &output_vol[0]), , "Error s_read_reg!");
 	CHECK(!s_write_reg(ES8388_DACCONTROL27, 0), , "Error s_read_reg!");  //音量调为0
+#endif
 }
