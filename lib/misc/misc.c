@@ -151,6 +151,7 @@ int drvCoreBoardInit(void) {
 	s_write_reg( 0x1a, 0);   //2023-02-22增加
 	s_write_reg( 0x1b, 0);   //2023-02-22增加
 	s_write_reg( 0x12, 0x3a);   //2023-02-23增加
+	s_write_reg( 0x3, 0x08);   //2023-03-16增加
 //	printf("--drvCoreBoardInit 2023-02-22\n");
 
 	

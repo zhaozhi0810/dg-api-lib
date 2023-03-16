@@ -109,7 +109,11 @@ extern int drvGetLCDMcuVersion(void);  //2023-01-03
 
 //2023-02-01 增加对 Yt8521sh 的检测  by zhaodazhi
 //返回1表示存在Yt8521sh，其他表示不存在
+// misc/mdio-cmd-rk3399.c
 extern int drvHasYt8521sh(void);
 
+
+//2023-02-28 禁止所有mic通道        by zhaodazhi
+extern void drvMuteAllMic(void);
 
 #endif /* DRV722_H_ */

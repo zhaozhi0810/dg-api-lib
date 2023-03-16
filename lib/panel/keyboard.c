@@ -113,8 +113,16 @@ static int s_ioctl_cmd(int cmd, char *val) {
 	return 0;
 }
 
+
+
+static int gkeyboard_model = -1;
+
 int getKeyboardType(void) {
-	int keyboard_model = 0;
+//	int keyboard_model = 0;
+
+	if(gkeyboard_model > 0)
+		return gkeyboard_model;   //2023-03-13 只查询一次就可以了
+	
 	if(!key_inited)
 	{
 		return -1;
@@ -127,17 +135,17 @@ int getKeyboardType(void) {
 			case 0x02:
 			case 0x03:
 			case 0x04:
-				keyboard_model = 0x04;  /*lsr modify 20220613*/
+				gkeyboard_model = 0x04;  /*lsr modify 20220613*/
 				break;
 			case 0x05:
-				keyboard_model = 0x06;
+				gkeyboard_model = 0x06;
 				break;
 			case 0x06:
-				keyboard_model = 0x01;
+				gkeyboard_model = 0x01;
 			default:
 				break;
 	}
-	return keyboard_model;
+	return gkeyboard_model;
 }
 
 void drvSetGpioKeyCbk(GPIO_NOTIFY_KEY_FUNC cbk) {
@@ -184,15 +192,20 @@ int drvIfBrdReset(void) {
 }
 
 //KEYBOARD_IOC_GET_PANEL_VER,2023-01-03
+static char g_mcu_version = -1;
 int getKeyboardMcuVersion(void) {
+
+	if(g_mcu_version > 0)
+		return g_mcu_version;
 
 	if(!key_inited)
 	{
 		return -1;
 	}
 	CHECK(!s_ioctl_cmd(KEYBOARD_IOC_GET_PANEL_VER, &s_keyboard_info.version), -1, "Error :getKeyboardMcuVersion:s_ioctl_cmd!");
+	g_mcu_version = s_keyboard_info.version;
 
-	return s_keyboard_info.version;
+	return g_mcu_version;
 }
 
 

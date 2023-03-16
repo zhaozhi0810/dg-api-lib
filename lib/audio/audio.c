@@ -306,3 +306,16 @@ void drvDisableEarphout(void) {
 	CHECK(!s_write_reg(ES8388_DACCONTROL27, 0), , "Error s_read_reg!");  //音量调为0
 #endif
 }
+
+
+
+//2023-02-28 禁止所有mic通道        by zhaodazhi
+void drvMuteAllMic(void)
+{
+	CHECK(!s_write_reg(ES8388_ADCCONTROL2, 0xa0), , "Error drvMuteAllMic!");
+}
+
+
+
+
+
